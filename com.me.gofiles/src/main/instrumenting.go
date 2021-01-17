@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/go-kit/kit/metrics"
+	"time"
 )
 
 type instrumentingMiddleware struct {
@@ -17,7 +16,7 @@ type instrumentingMiddleware struct {
 func instrumentingMiddlewareCre(
 	requestCount metrics.Counter,
 	requestLatency metrics.Histogram,
-	countResult metrics.Histogram,)ServiceMiddleware {
+	countResult metrics.Histogram) ServiceMiddleware {
 	return func(next StringService) StringService {
 		return instrumentingMiddleware{requestCount, requestLatency, countResult, next}
 	}
