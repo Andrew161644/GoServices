@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 )
+
 func main() {
 	/*go run . -listen=:8080 -proxy=localhost:8001,localhost:8002,localhost:8003*/
 	var (
@@ -50,7 +51,6 @@ func main() {
 	svc = loggingMiddlewareCre(logger)(svc)
 	svc = instrumentingMiddlewareCre(requestCount, requestLatency, countResult)(svc)
 
-
 	uppercaseHandler := httptransport.NewServer(
 		makeUppercaseEndpoint(svc),
 		decodeUppercaseRequest,
@@ -63,16 +63,20 @@ func main() {
 		encodeResponse,
 	)
 
-	statusHandler :=httptransport.NewServer(
+	statusHandler := httptransport.NewServer(
 		makeStatusEndpoint(svc),
 		decodeStatusRequest,
 		encodeResponse,
-		)
+	)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static")))) /*makes static files available */
 
 	http.Handle("/uppercase", uppercaseHandler)
 	http.Handle("/count", countHandler)
-	http.Handle("/status",statusHandler)
+	http.Handle("/status", statusHandler)
 	http.Handle("/metrics", promhttp.Handler())
+
+	http.HandleFunc("/page", HelloPageHandler)
+
 	logger.Log("msg", "HTTP", "addr", *listen)
 	logger.Log("err", http.ListenAndServe(*listen, nil))
 }
@@ -83,4 +87,3 @@ func decodeUppercaseRequest(_ context.Context, r *http.Request) (interface{}, er
 	}
 	return request, nil
 }
-

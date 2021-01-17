@@ -11,15 +11,15 @@ import (
 
 func makeUppercaseEndpoint(svc StringService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		req:=request.(uppercaseRequest)
-		v, err:=svc.Uppercase(req.S)
+		req := request.(uppercaseRequest)
+		v, err := svc.Uppercase(req.S)
 		if err != nil {
-			return uppercaseResponse{v,err.Error()}, nil
+			return uppercaseResponse{v, err.Error()}, nil
 		}
-		return uppercaseResponse{v, ""},nil
+		return uppercaseResponse{v, ""}, nil
 	}
 }
-func makeCountEndpoint(svc StringService) endpoint.Endpoint{
+func makeCountEndpoint(svc StringService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(countRequest)
 		v := svc.Count(req.S)
@@ -27,9 +27,9 @@ func makeCountEndpoint(svc StringService) endpoint.Endpoint{
 	}
 }
 
-func makeStatusEndpoint(svc StringService) endpoint.Endpoint{
+func makeStatusEndpoint(svc StringService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		v:=svc.Status()
+		v := svc.Status()
 		return statusResponse{v}, nil
 	}
 }
@@ -62,11 +62,12 @@ func decodeStatusRequest(_ context.Context, r *http.Request) (interface{}, error
 func encodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
 	return json.NewEncoder(w).Encode(response)
 }
+
 type uppercaseRequest struct {
 	S string `json:"s"`
 }
 type uppercaseResponse struct {
-	V string `json:"v"`
+	V   string `json:"v"`
 	Err string `json:"err,omitempty"`
 }
 type countRequest struct {
@@ -77,9 +78,7 @@ type countResponse struct {
 	V int `json:"v"`
 }
 
-type statusRequest struct {
-
-}
+type statusRequest struct{}
 
 type statusResponse struct {
 	S string `json:"s"`

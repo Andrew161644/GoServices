@@ -11,18 +11,20 @@ type StringService interface {
 	Count(string) int
 }
 
-type stringService struct {}
+type stringService struct {
+}
+
 var ErrEmpty = errors.New("Empty error")
 var Status = "Ok"
 
-func (stringService)Uppercase(s string) (string,error)  {
+func (stringService) Uppercase(s string) (string, error) {
 	if s == "" {
-		return "",ErrEmpty
+		return "", ErrEmpty
 	}
 	return strings.ToUpper(s), nil
 }
 
-func (stringService) Count(s string) int  {
+func (stringService) Count(s string) int {
 	return len(s)
 }
 
@@ -31,4 +33,3 @@ func (stringService) Status() string {
 }
 
 type ServiceMiddleware func(StringService) StringService
-
